@@ -1,0 +1,2 @@
+test_id,model,prompt,test_name,passed,score,passed_questions,total_questions,timestamp
+claude-4-sonnet_version1_comparacion_crypto_tradicional,claude-4-sonnet,version1,comparacion_crypto_tradicional,True,1.0,1,1,2025-10-10T03:51:50.951570

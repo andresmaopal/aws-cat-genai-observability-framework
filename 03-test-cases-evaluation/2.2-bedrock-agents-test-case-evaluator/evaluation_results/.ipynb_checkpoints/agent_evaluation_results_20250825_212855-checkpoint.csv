@@ -1,0 +1,16 @@
+AGENT_ID,AGENT_ALIAS,TEST_NAME,QUESTION_NUMBER,QUESTION,EXPECTED_RESULT,AGENT_RESPONSE,QUESTION_PASSED,TEST_PASSED,REASONING
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,1,¿Puedes ayudarme a entender cómo está desempeñándose el mercado cripto hoy?,El agente proporciona un análisis de situación del mercado cripto hoy,"Basándome en los datos actuales del mercado de criptomonedas, puedo ofrecerte un resumen:
+
+🔹 Principales características del mercado cripto hoy:
+- Bitcoin (primera criptomoneda) está alrededor de $109,704
+- Ethereum se mantiene cerca de $4,364
+- Hay variedad de precios en diferentes criptomonedas, desde centavos hasta miles de dólares
+
+Algunos puntos importantes:
+- El mercado muestra diversidad en los precios
+- Hay estabilidad en las principales criptomonedas
+- Se observan variaciones en los diferentes activos
+
+¿Te gustaría que profundice en algún aspecto específico del mercado cripto?",True,True,"The user question is asking for an understanding of how the cryptocurrency market is performing today. The agent's response provides a summary of the current state of the market, including specific prices for Bitcoin and Ethereum, mentions the diversity of prices across different cryptocurrencies, and notes the stability in major cryptocurrencies along with variations in other assets. 
+
+The expected result is that the agent should provide an analysis of the current situation in the cryptocurrency market. The agent's response does indeed offer a summary and analysis of the market, including key points and specific data. Therefore, the agent's response meets the expected result criteria."

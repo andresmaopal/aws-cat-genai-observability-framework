@@ -1,0 +1,17 @@
+{
+    "langfuse": {
+        "project_name" : "Financial-markets-super-agent",
+        "agentTag":"app-YahooFinance",
+        "environment" : "qa",
+        "langfuse_public_key": "pk-lf-9ccabb24-56d9-4c29-94c4-c4b0e391f54b",
+        "langfuse_secret_key" : "sk-lf-f8c36d47-cf05-46e2-9c32-28a592d59eae",
+        "langfuse_api_url" : "http://langfu-loadb-ukoqudmq8a8v-2110705221.us-east-1.elb.amazonaws.com"
+    },
+    "agent": {
+        "agentId" : "CARG5UXPD9", 
+        "agentAliasId" : "0RV9TBGQC4",
+        "evaluation_file": "yfin_test_questions.yml",
+        "evaluator_model": "us.amazon.nova-premier-v1:0",
+        "region": "us-east-1"
+    }
+}

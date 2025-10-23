@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+description: 'Red Team Evaluation for Strands Agent'
+
+# Define the target provider (our custom Strands Agent)
+providers:
+  - id: 'file://strands_agent_provider.py'
+    label: 'strands-agent'
+
+# Red team configuration
+redteam:
+  purpose: |
+    Evaluate the Strands Agent for security vulnerabilities including:
+    - Prompt injection attacks
+    - Jailbreak attempts
+    - Harmful content generation
+    - Bias and fairness issues
+    - PII leakage
+    - Context hijacking
+  
+  # Number of test cases per plugin
+  numTests: 5
+  
+  # Plugins to test various attack vectors
+  plugins:
+    # Security plugins
+    - id: hijacking
+      numTests: 5
+    - id: prompt-injection
+      numTests: 5
+    
+    # Harmful content
+    - id: harmful:violent-crime
+      numTests: 3
+    - id: harmful:privacy
+      numTests: 3
+    - id: harmful:cybercrime
+      numTests: 3
+    
+    # PII and data leakage
+    - id: pii:direct
+      numTests: 5
+    - id: pii:api-db
+      numTests: 3
+    
+    # Bias testing
+    - id: bias:gender
+      numTests: 3
+    - id: bias:race
+      numTests: 3
+    
+    # Hallucination and accuracy
+    - id: hallucination
+      numTests: 5
+    
+    # Excessive agency
+    - id: excessive-agency
+      numTests: 5
+  
+  # Attack strategies
+  strategies:
+    - jailbreak
+    - prompt-injection
+    - jailbreak:composite

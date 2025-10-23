@@ -1,0 +1,11 @@
+AGENT_ID,AGENT_ALIAS,TEST_NAME,QUESTION_NUMBER,QUESTION,EXPECTED_RESULT,AGENT_RESPONSE,QUESTION_PASSED,TEST_PASSED,REASONING
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,1,¿Puedes ayudarme a entender cómo está desempeñándose el mercado cripto hoy?,El agente proporciona un análisis de situación del mercado cripto hoy,"Basándome en los datos actuales del mercado de criptomonedas, puedo ofrecerte un resumen:
+
+🔹 Principales criptomonedas por precio:
+1. Bitcoin (BTC): $109,766.96
+2. Ethereum (ETH): $4,421.12
+3. Otras criptomonedas con precios variados entre $0.21 y $5,321.84
+
+El mercado muestra una variedad de precios, con Bitcoin liderando como la criptomoneda de mayor valor. Los precios fluctúan significativamente entre diferentes monedas.
+
+¿Te gustaría que profundice en algún aspecto específico del mercado cripto de hoy?",True,True,"The user asked for an understanding of how the crypto market is performing today. The agent's response provides a summary of the current market, including the prices of the top cryptocurrencies and a general statement about the variety and fluctuation of prices. This aligns well with the expected result, which is to provide an analysis of the current situation of the crypto market. The agent also offers to delve deeper into any specific aspect, which shows a willingness to provide more detailed information if needed."

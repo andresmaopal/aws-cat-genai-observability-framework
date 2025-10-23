@@ -1,0 +1,57 @@
+AGENT_ID,AGENT_ALIAS,TEST_NAME,QUESTION_NUMBER,QUESTION,EXPECTED_RESULT,AGENT_RESPONSE,QUESTION_PASSED,TEST_PASSED,REASONING
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,1,¿Puedes ayudarme a entender cómo está desempeñándose el mercado cripto hoy?,El agente proporciona un análisis de situación del mercado cripto hoy,"Basándome en los datos actuales del mercado de criptomonedas, puedo ofrecerte un resumen:
+
+🔹 Principales características del mercado:
+- Bitcoin (primera posición) está cotizando alrededor de $109,972.69
+- Ethereum (segunda posición) se encuentra cerca de $4,410.24
+- Otras criptomonedas muestran variaciones de precio entre $0.20 y $5,307.95
+
+El mercado muestra una diversidad de precios y parece estar experimentando movimientos dinámicos. Te recomendaría estar atento a las tendencias y realizar tu propia investigación antes de tomar decisiones de inversión.
+
+¿Te gustaría que profundice en algún aspecto específico del mercado cripto?",True,False,"El agente ha proporcionado un resumen del mercado de criptomonedas que incluye los precios actuales de Bitcoin y Ethereum, así como una mención de la variación de precios en otras criptomonedas. Además, el agente sugiere estar atento a las tendencias y realizar investigación propia antes de tomar decisiones de inversión. Esto se alinea con la expectativa de proporcionar un análisis de la situación actual del mercado cripto. La respuesta también invita al usuario a profundizar en algún aspecto específico, lo cual es un toque adicional que mejora la interacción. Por lo tanto, la respuesta del agente parece cumplir con los criterios del resultado esperado."
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,2,"Basándo en esa información, ¿cuáles son las 3 mejores criptomonedas que tuvieron el mejor rendimiento hoy?",El agente lista las 3 mejores criptomonedas que tuvieron el mejor rendimiento hoy.,"Según los datos disponibles, las 3 criptomonedas con mejor rendimiento hoy son:
+
+1. Bitcoin (BTC): $109,972.69 - Líder indiscutible del mercado
+2. Ethereum (ETH): $4,410.24 - Segunda criptomoneda más importante
+3. Una moneda con precio de $5,307.95 - Mostrando un rendimiento significativo
+
+Sin embargo, es importante tener en cuenta que:
+- Los precios por sí solos no determinan completamente el rendimiento
+- Se recomienda analizar también la volatilidad y capitalización de mercado
+- Siempre es crucial realizar tu propia investigación antes de invertir
+
+¿Te gustaría que te explique más sobre estas criptomonedas o necesitas información adicional?",False,False,"El agente ha proporcionado una lista de 3 criptomonedas con sus respectivos precios, lo cual parece cumplir con la solicitud del usuario. Sin embargo, hay un punto importante a considerar: la tercera criptomoneda no tiene un nombre específico, solo se menciona su precio. Aunque se dan precios y se hace una recomendación sobre la investigación adicional, la falta de identificación clara de la tercera criptomoneda podría ser considerada como una falla en proporcionar una respuesta completa según lo esperado."
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,3,Amplia información sobre la mejor criptomoneda de tu anterior analisis,El agente proporciona información detallada sobre la criptomoneda que se destacó más hoy,"Información detallada sobre Bitcoin (BTC):
+
+🔹 Precio Actual: $109,972.69
+
+Características principales:
+- Primera y más importante criptomoneda del mundo
+- Fundada en 2009 por un creador anónimo bajo el seudónimo de Satoshi Nakamoto
+- Funciona con tecnología blockchain, descentralizada y sin control de gobiernos o bancos centrales
+
+Aspectos clave:
+- Considerada un activo de reserva digital
+- Límite máximo de 21 millones de monedas
+- Método de inversión popular entre inversores individuales e institucionales
+- Alta volatilidad en su precio
+- Reconocida como ""oro digital"" por muchos expertos financieros
+
+Recomendaciones:
+- Invertir solo lo que puedas permitirte perder
+- Realizar investigación profunda
+- Diversificar inversiones
+- Mantenerse informado sobre regulaciones y tendencias del mercado
+
+¿Deseas que profundice en algún aspecto específico de Bitcoin?",True,False,"El agente ha proporcionado una respuesta detallada sobre Bitcoin, que incluye su precio actual, características principales, aspectos clave, y recomendaciones para invertir. La pregunta del usuario solicita información amplia sobre la ""mejor criptomoneda"" según el análisis anterior del agente. Aunque el agente no menciona explícitamente que Bitcoin fue la ""mejor criptomoneda"" según su análisis anterior, la respuesta proporciona una información muy completa y relevante que podría sugerir que Bitcoin fue destacada en un análisis previo. La respuesta cumple con los criterios de proporcionar información detallada y relevante."
+CARG5UXPD9,0RV9TBGQC4,noticias_acciones,1,¿Cuáles son las noticias más importantes del mercado de valores de hoy?,El agente proporciona un resumen de las 2-3 noticias más relevantes del mercado de valores del día actual con fuentes confiables.,"Entiendo que estás interesado en las noticias más importantes del mercado de valores de hoy. Para proporcionarte información precisa y relevante, necesitaría saber sobre qué acción o empresa en particular te gustaría obtener noticias. 
+
+¿Hay alguna empresa o sector específico del mercado de valores sobre el que te gustaría conocer las últimas noticias? Por ejemplo, podrías estar interesado en empresas tecnológicas como Apple (AAPL), Microsoft (MSFT), o quizás en el sector financiero con empresas como JPMorgan Chase (JPM).",False,False,"El agente no ha proporcionado un resumen de las 2-3 noticias más relevantes del mercado de valores del día actual. En cambio, ha solicitado más información al usuario sobre qué acción o empresa específica le gustaría conocer. Esto no cumple con el criterio esperado de proporcionar un resumen de noticias relevantes con fuentes confiables."
+CARG5UXPD9,0RV9TBGQC4,informacion_acciones,1,¿Cuál es el precio actual de las acciones de Tesla y su variación porcentual del día?,"El agente proporciona el precio actual de TSLA, el cambio porcentual diario y datos de volumen de trading actualizados.","Lo siento, en este momento estoy experimentando dificultades técnicas para obtener la información precisa sobre las acciones de Tesla. 
+
+Recomendaciones:
+- Verificar el precio actual en una plataforma financiera en línea
+- Consultar tu corredor de bolsa para obtener los datos más recientes
+- Revisar sitios web especializados como Yahoo Finance o Google Finance
+
+Si deseas, puedo ayudarte a interpretar la información una vez que la obtengas. ¿Te gustaría que te ayude a encontrar los datos de Tesla?",False,False,"La pregunta del usuario solicita información específica sobre el precio actual de las acciones de Tesla y su variación porcentual del día. El agente, sin embargo, no proporciona esta información directamente debido a dificultades técnicas. En lugar de ello, ofrece recomendaciones sobre cómo obtener la información y se ofrece para ayudar en la interpretación de los datos una vez que se obtengan. Aunque el agente intenta ser útil, no cumple con el criterio esperado de proporcionar el precio actual, el cambio porcentual diario y los datos de volumen de trading actualizados."

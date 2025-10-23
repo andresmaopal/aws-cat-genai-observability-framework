@@ -1,0 +1,2 @@
+test_id,model,prompt,query,response,analysis_text,response_time,success,error,timestamp
+llama-4-maverick_version1_3130,llama-4-maverick,version1,What is the current bitcoin price?,,,0,False,An error occurred (ValidationException) when calling the ConverseStream operation: This model doesn't support tool use in streaming mode.,2025-10-17T18:38:17.551238

@@ -1,0 +1,3 @@
+test_id,model,prompt,test_name,passed,score,passed_questions,total_questions,timestamp
+claude-4-sonnet_version1_comparacion_crypto_tradicional,claude-4-sonnet,version1,comparacion_crypto_tradicional,True,1.0,1,1,2025-10-10T04:01:33.582457
+claude-4-sonnet_version1_escenario_analisis_accion_individual,claude-4-sonnet,version1,escenario_analisis_accion_individual,False,0.0,0,2,2025-10-10T04:02:32.515301

@@ -1,0 +1,11 @@
+AGENT_ID,AGENT_ALIAS,TEST_NAME,QUESTION_NUMBER,QUESTION,EXPECTED_RESULT,AGENT_RESPONSE,QUESTION_PASSED,TEST_PASSED,REASONING
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,1,¿Puedes ayudarme a entender cómo está desempeñándose el mercado cripto hoy?,El agente proporciona un análisis de situación del mercado cripto hoy,"Basándome en los datos actuales del mercado de criptomonedas, puedo ofrecerte un resumen:
+
+🔹 Principales características del mercado:
+- Bitcoin (BTC) está alrededor de $109,511.88
+- Ethereum (ETH) se cotiza cerca de $4,352.57
+- Otras criptomonedas muestran variaciones de precio
+
+El mercado cripto muestra actividad dinámica con diferentes niveles de precios. Te recomendaría estar atento a las fluctuaciones y, si estás considerando invertir, realizar una investigación más detallada.
+
+¿Te gustaría que profundice en algún aspecto específico del mercado cripto?",True,True,"The agent's response provides a summary of the current state of the cryptocurrency market, including specific prices for Bitcoin and Ethereum, and mentions that other cryptocurrencies show price variations. It also advises the user to be aware of fluctuations and to conduct further research if considering investing. The response aligns with the expected result of providing an analysis of the current situation of the cryptocurrency market."

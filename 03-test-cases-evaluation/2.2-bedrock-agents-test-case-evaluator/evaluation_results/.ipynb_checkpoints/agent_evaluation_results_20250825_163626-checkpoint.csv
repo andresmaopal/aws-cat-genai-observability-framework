@@ -1,0 +1,107 @@
+AGENT_ID,AGENT_ALIAS,TEST_NAME,QUESTION_NUMBER,QUESTION,EXPECTED_RESULT,AGENT_RESPONSE,QUESTION_PASSED,TEST_PASSED,REASONING
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,1,¿Puedes ayudarme a entender cómo está desempeñándose el mercado cripto hoy?,El agente proporciona un análisis de situación del mercado cripto hoy,"Basándome en los datos actuales del mercado de criptomonedas, puedo ofrecerte un resumen:
+
+🔹 Principales características del mercado:
+- Bitcoin (BTC) está cotizando alrededor de $112,641
+- Ethereum (ETH) se encuentra cerca de $4,616
+- Otras criptomonedas muestran variaciones de precio entre $0.20 y $5,592
+
+El mercado muestra una diversidad de precios, con algunas monedas en rangos muy diferentes. Te recomendaría estar atento a las fluctuaciones y hacer una investigación más detallada antes de tomar cualquier decisión de inversión.
+
+¿Te gustaría que profundice en algún aspecto específico del mercado cripto?",True,True,"The agent's response provides a summary of the current state of the cryptocurrency market, including specific prices for Bitcoin and Ethereum, as well as a general statement about the price variations of other cryptocurrencies. This aligns with the expected result, which is to provide an analysis of the current situation of the crypto market. The agent also offers to delve deeper into any specific aspect of the market if requested, which adds value to the response. Therefore, the agent's response meets the expected result criteria."
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,2,"Basándo en esa información, ¿cuáles son las 3 mejores criptomonedas que tuvieron el mejor rendimiento hoy?",El agente lista las 3 mejores criptomonedas que tuvieron el mejor rendimiento hoy.,"Basándome en los datos anteriores, las 3 criptomonedas con mejor rendimiento hoy serían:
+
+1. Bitcoin (BTC): $112,641.53 - La criptomoneda líder del mercado
+2. Ethereum (ETH): $4,616.87 - La segunda criptomoneda más importante
+3. Una moneda con precio de $5,592.58 - Que muestra un rendimiento significativo
+
+Sin embargo, para darte una recomendación más precisa, sugiero:
+- Realizar una investigación adicional sobre el volumen de trading
+- Verificar la volatilidad de cada moneda
+- Consultar análisis de expertos
+
+¿Te gustaría que profundice en alguna de estas criptomonedas en particular?",True,True,"The user asked for the top 3 best-performing cryptocurrencies today. The agent provided a list of three cryptocurrencies with their respective prices, which seems to align with the user's request. However, the agent also included additional suggestions for further investigation, which, while helpful, are not directly required by the expected result. The expected result specifically asks for the listing of the top 3 cryptocurrencies, which the agent did provide, even though the third cryptocurrency is not named."
+CARG5UXPD9,0RV9TBGQC4,analisis_criptomonedas,3,Amplia información sobre la mejor criptomoneda de tu anterior analisis,El agente proporciona información detallada sobre la criptomoneda que se destacó más hoy,"Información detallada sobre Bitcoin (BTC):
+
+🔹 Precio Actual: $112,641.53
+🔹 Posición en el Mercado: Líder indiscutible de las criptomonedas
+
+Características Principales:
+- Primera criptomoneda creada en el mundo
+- Fundada en 2009 por Satoshi Nakamoto
+- Funciona sobre tecnología blockchain
+- Considerada un activo de reserva digital
+- Máxima cantidad limitada a 21 millones de monedas
+
+Ventajas:
+- Mayor capitalización de mercado
+- Más alta adopción institucional
+- Considerada ""oro digital""
+- Mayor liquidez en exchanges
+
+Consideraciones de Inversión:
+- Alta volatilidad
+- Inversión de alto riesgo
+- Requiere estrategia de inversión a largo plazo
+
+Recomendación: Antes de invertir, realiza una investigación profunda y consulta con asesores financieros.
+
+¿Deseas que profundice en algún aspecto específico de Bitcoin?",True,True,"The agent's response provides detailed information about Bitcoin, including its current price, market position, main characteristics, advantages, investment considerations, and a recommendation for further research before investing. The response is comprehensive and aligns well with the expected result, which asks for detailed information about the cryptocurrency that stood out the most. The agent has not only provided detailed information but also offered to delve deeper into any specific aspect if needed."
+CARG5UXPD9,0RV9TBGQC4,noticias_acciones,1,¿Cuáles son las noticias más importantes del mercado de valores de hoy?,El agente proporciona un resumen de las 2-3 noticias más relevantes del mercado de valores del día actual con fuentes confiables.,"Entiendo que estás interesado en las noticias más importantes del mercado de valores de hoy. Para proporcionarte información precisa y relevante, necesitaría saber sobre qué acción o índice en particular te gustaría obtener noticias. 
+
+Por ejemplo, podría buscar noticias sobre:
+- Índices importantes como el S&P 500 (símbolo: SPY) o el Dow Jones (símbolo: DJI)
+- Acciones tecnológicas populares como Apple (AAPL), Microsoft (MSFT), o Google (GOOGL)
+- Cualquier otra acción o sector que te interese particularmente
+
+¿Podrías especificar una acción o un índice sobre el cual te gustaría conocer las noticias más recientes?",False,False,"The user's question asks for the most important news in the stock market today. The expected result specifies that the agent should provide a summary of the 2-3 most relevant news items from the current day with reliable sources.
+
+However, the agent's response does not provide any news summaries or sources. Instead, it asks the user to specify a particular stock or index they are interested in. While this is a reasonable approach to narrow down the information, it does not fulfill the expected result of providing a summary of the news.
+
+Therefore, the agent's response does not meet the expected result criteria."
+CARG5UXPD9,0RV9TBGQC4,informacion_acciones,1,¿Cuál es el precio actual de las acciones de Tesla y su variación porcentual del día?,"El agente proporciona el precio actual de TSLA, el cambio porcentual diario y datos de volumen de trading actualizados.","Lo siento, en este momento no puedo proporcionarte el precio exacto de las acciones de Tesla debido a problemas técnicos con el servicio de información bursátil. 
+
+Sin embargo, puedo ofrecerte algunos consejos:
+- El precio de Tesla (TSLA) fluctúa constantemente durante el día de trading
+- Para obtener el precio más actualizado, te recomiendo:
+  1. Consultar un sitio web financiero en tiempo real
+  2. Verificar tu plataforma de inversiones
+  3. Revisar aplicaciones de finanzas como Yahoo Finance o Google Finance
+
+¿Te gustaría que te ayude a encontrar una fuente confiable para consultar el precio actual de Tesla?",False,False,"The user question asks for the current price of Tesla stocks and the percentage change for the day. The expected result specifies that the agent should provide the current price, the daily percentage change, and updated trading volume data.
+
+However, the agent's response states that it cannot provide the exact price due to technical issues. Instead, it offers general advice on where to find the current price and asks if the user would like help finding a reliable source.
+
+Since the agent did not provide the specific information requested (current price, percentage change, and trading volume), the response does not meet the expected result criteria."
+CARG5UXPD9,0RV9TBGQC4,informacion_acciones,2,¿Puedes mostrarme el rendimiento semanal de NVIDIA comparado con el índice S&P 500?,El agente presenta el rendimiento porcentual semanal de NVDA versus el S&P 500 con gráficos comparativos si están disponibles.,"Basado en la información disponible, puedo ofrecerte una perspectiva sobre NVIDIA (NVDA) en comparación con el S&P 500:
+
+📊 **S&P 500 - Situación Actual:**
+- Precio actual: 6,464.68
+- Variación reciente: -2.23 puntos (-0.03%)
+- Tendencia: Estabilidad relativa con una ligera caída
+
+🖥️ **NVIDIA (NVDA) - Contexto Actual:**
+- Empresa líder en tecnología de semiconductores
+- Cotiza en el NASDAQ
+- Especializada en GPUs y soluciones de inteligencia artificial
+
+📰 **Factores Recientes que Influyen en NVIDIA:**
+1. **Próximo informe de ganancias** - NVIDIA presentará resultados del segundo trimestre esta semana
+2. **Expectativas elevadas** - Analistas de Wall Street prevén resultados positivos
+3. **Desafíos regulatorios** - Se espera que informe un impacto de $8 mil millones por la prohibición de venta de chips a China
+4. **Avances tecnológicos** - Recientes anuncios en IA y robótica, incluyendo:
+   - Lanzamiento de Jetson AGX Thor (supercomputador para robótica)
+   - Nuevas colaboraciones estratégicas con Infineon, RealSense y Telit Cinterion
+
+⚠️ **Nota importante:** Lamentablemente, no puedo proporcionarte datos precisos sobre el rendimiento porcentual semanal exacto de NVIDIA en comparación con el S&P 500 debido a limitaciones en el acceso a datos financieros en tiempo real.
+
+**Recomendaciones para obtener datos precisos:**
+- Consultar plataformas financieras como Yahoo Finance, Google Finance o Bloomberg
+- Revisar aplicaciones de inversión como Robinhood, E*TRADE o TD Ameritrade
+- Contactar con un asesor financiero para análisis detallados
+
+¿Te gustaría que te ayude con alguna información adicional específica sobre NVIDIA o el mercado en general?",False,False,"The user asked for the weekly performance of NVIDIA compared to the S&P 500. The expected result is that the agent should provide the weekly percentage performance of NVDA versus the S&P 500, ideally with comparative graphs if available.
+
+However, the agent's response does not provide the specific weekly performance data for NVIDIA compared to the S&P 500. Instead, it offers contextual information about NVIDIA and the S&P 500, recent factors influencing NVIDIA, and recommendations for obtaining precise data. 
+
+Since the agent failed to deliver the specific data requested (weekly performance comparison), the response does not meet the expected result criteria."

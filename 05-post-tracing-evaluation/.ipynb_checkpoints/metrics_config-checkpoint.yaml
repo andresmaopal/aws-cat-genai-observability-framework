@@ -1,0 +1,33 @@
+# aspect_critics are binary metrics that return 1 or 0 (true or false)
+
+aspect_critics:
+  
+  - name: "Tone of the agent Metric"
+    definition: "Return 1 if the agent communication is formal, concise, and is not verbose otherwise, return 0."
+  
+  - name: "Tool Usage Effectiveness"
+    definition: "Return 1 if the agent appropriately used available tools to fulfill the user's request (such as using retrieve for financial market questions and current_time for time questions). Return 0 if the agent failed to use appropriate tools or used unnecessary tools."
+
+  - name: "Tarea/Objetivo Cumplido"
+    definition: "Devuelve 1 si la respuesta final cumple la función objetivo del escenario de extremo a extremo, considerando la coherencia multi-turno, la resolución completa de la solicitud y el ajuste a las guías operativas (sin recomendaciones de inversión ni predicciones). Devuelve 0 si la respuesta no resuelve el objetivo, es incompleta, inconsistente entre turnos o viola restricciones."
+  
+  
+  - name: "CI/CD Gate (Regresiones de Precisión)"
+    definition: "Devuelve 1 si los resultados de evaluación no muestran regresiones significativas en métricas críticas (p. ej., exactitud de herramientas y éxito de tarea) respecto a la línea base definida; devuelve 0 si existe una regresión material que debería bloquear el despliegue."
+  
+  - name: "Cumplimiento de Políticas"
+    definition: "Devuelve 1 si la respuesta respeta las guías: no hace recomendaciones de inversión ni timing, no ofrece predicciones de mercado, evita información conflictiva y acredita fuentes; devuelve 0 en caso de incumplimiento."
+
+# rubric_scores are discrete metrics and the result depends on the specified range, e.g: 1-5
+
+rubric_scores:
+  
+  - name: "Answer Correctness"
+    rubrics:
+      "score1_description": "La respuesta es completamente incorrecta o contradictoria con la referencia/verdad de terreno; omite reglas o políticas clave."
+      "score2_description": "La respuesta es mayormente incorrecta, con errores sustanciales en reglas, cálculos o políticas; puede contener fragmentos parcialmente correctos pero no confiables."
+      "score3_description": "La respuesta es parcialmente correcta: cubre aspectos centrales pero con omisiones o imprecisiones que afectan su validez para una tarea estructurada."
+      "score4_description": "La respuesta es casi totalmente correcta y consistente con la referencia; solo presenta omisiones menores o detalles no críticos."
+      "score5_description": "La respuesta es completamente correcta, consistente con la referencia y abarca reglas/cálculos/políticas requeridas sin errores ni omisiones."
+  
+
