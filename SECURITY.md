@@ -5,9 +5,8 @@
 If you discover a security vulnerability, please report it responsibly:
 
 1. **Do NOT** create a public GitHub issue
-2. Email security concerns to: [your-security-email@domain.com]
-3. Include detailed steps to reproduce the vulnerability
-4. Allow reasonable time for response before public disclosure
+2. Include detailed steps to reproduce the vulnerability
+3. Allow reasonable time for response before public disclosure
 
 ## Security Best Practices
 
