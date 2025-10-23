@@ -2,8 +2,7 @@
 
 A comprehensive framework for building, monitoring, and evaluating generative AI applications on AWS with enterprise-grade observability, testing, and security controls.
 
-![AWS Observability and Evaluation framework](images/
-aws_obseervability_fmwk.png)
+![AWS Observability and Evaluation framework](images/aws_obseervability_fmwk.png)
 
 ## 🎯 Overview
 
