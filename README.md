@@ -12,7 +12,7 @@ This framework provides end-to-end observability and evaluation capabilities for
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────────────┐
-│                                    GenAI Observability Framework                  │
+│                         GenAI Observability Framework                             │
 ├───────────────────────────────────────────────────────────────────────────────────┤
 │  01-experiment-tracking  │  02-tracing-monitoring  │  03-test-cases-evaluation    │
 │  • Prompt optimization   │  • Langfuse tracing     │  • Automated test generation │
