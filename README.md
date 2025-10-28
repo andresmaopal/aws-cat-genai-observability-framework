@@ -19,10 +19,10 @@ This framework provides end-to-end observability and evaluation capabilities for
 │  • A/B testing           │  • AgentCore tracing    │  • Strands agents testing    │
 │  • Model comparison      │  • Real-time monitoring │  • Bedrock agents testing    │
 ├───────────────────────────────────────────────────────────────────────────────────┤
-│  04-red-teaming-evaluation  │  05-post-tracing-evaluation                         │
-│  • Security testing         │  • RAGAS metrics                                    │
-│  • Prompt injection         │  • Performance analysis                             │
-│  • Bias detection           │  • Quality assessment                               │
+│  04-red-teaming-evaluation  │  05-post-tracing-evaluation │                       │
+│  • Security testing         │  • RAGAS metrics            │                       │
+│  • Prompt injection         │  • Performance analysis     │                       │
+│  • Bias detection           │  • Quality assessment       │                       │
 └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
