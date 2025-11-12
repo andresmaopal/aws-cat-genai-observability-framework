@@ -1,4 +1,4 @@
-# AWS GenAI Observability Framework
+# AWS GenAI Evaluation & Observability Framework
 
 A comprehensive framework for building, monitoring, and evaluating generative AI applications on AWS with enterprise-grade observability, testing, and security controls.
 
