@@ -1,0 +1,3 @@
+test_id,model,prompt,query,response,tools_used,response_time,success,error,timestamp
+bedrock/us.amazon.nova-micro-v1:0_version1_1762360670,bedrock/us.amazon.nova-micro-v1:0,version1,Make a reservation for tonight at Rice & Spice for 5 persons At 8pm in the name of Andres,"<answer>Hello! I'm Restaurant Helper, and I'm here to assist you with your reservation. To proceed with your reservation at Rice & Spice for 5 persons tonight at 8pm in the name of Andres, I need to confirm a few details. Could you please provide me with your full name and contact number so I can ensure everything is set up correctly? Additionally, if you have any dietary preferences or special requests, please let me know.</answer>
+",[],1.6949167251586914,True,,2025-11-05T11:37:50.072281
