@@ -2,8 +2,7 @@
 
 A comprehensive framework for building, monitoring, and evaluating generative AI applications on AWS with enterprise-grade observability, testing, and security controls.
 
-![AWS Observability and Evaluation framework](images/
-aws_obseervability_fmwk.png)
+![AWS Observability and Evaluation framework](images/aws_obseervability_fmwk.png)
 
 ## 🎯 Overview
 
@@ -12,19 +11,19 @@ This framework provides end-to-end observability and evaluation capabilities for
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    GenAI Observability Framework                │
-├─────────────────────────────────────────────────────────────────┤
-│  01-experiment-tracking  │  02-tracing-monitoring  │  03-test-cases-evaluation  │
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│                    GenAI Observability Framework                                  │
+├───────────────────────────────────────────────────────────────────────────────────┤
+│  01-experiment-tracking  │  02-tracing-monitoring  │  03-test-cases-evaluation    │
 │  • Prompt optimization   │  • Langfuse tracing     │  • Automated test generation │
-│  • A/B testing          │  • AgentCore tracing    │  • Strands agents testing    │
+│  • A/B testing          │  • AgentCore tracing     │  • Strands agents testing    │
 │  • Model comparison      │  • Real-time monitoring │  • Bedrock agents testing    │
-├─────────────────────────────────────────────────────────────────┤
-│  04-red-teaming-evaluation  │  05-post-tracing-evaluation       │
-│  • Security testing         │  • RAGAS metrics                  │
-│  • Prompt injection         │  • Performance analysis          │
-│  • Bias detection           │  • Quality assessment             │
-└─────────────────────────────────────────────────────────────────┘
+├───────────────────────────────────────────────────────────────────────────────────┤
+│  04-red-teaming-evaluation  │  05-post-tracing-evaluation                         │
+│  • Security testing         │  • RAGAS metrics                                    │
+│  • Prompt injection         │  • Performance analysis                             │
+│  • Bias detection           │  • Quality assessment                               │
+└───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start
