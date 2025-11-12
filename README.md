@@ -110,13 +110,12 @@ Advanced evaluation using RAGAS metrics:
 - Context relevance scoring
 - Response completeness analysis
 
-## 🛠️ Supported Technologies
+## Supported Technologies
 
-### AWS Services
-- **Amazon Bedrock**: Claude, Nova, Titan models
-- **Amazon Bedrock Agents**: Native agent framework
+### AWS Supported Services
+- **Amazon Bedrock**: Model endpoints and Guardrails
+- **Amazon Bedrock AgentCore**: For Agent runtime hosting and Observability
 - **AWS Systems Manager**: Parameter Store for secrets
-- **Amazon EKS**: Container orchestration
 
 ### Observability Stack
 - **Langfuse v3**: Trace collection and analysis
@@ -127,26 +126,6 @@ Advanced evaluation using RAGAS metrics:
 ### Agent Frameworks
 - **Strands Agents SDK**: Enterprise agent framework
 - **AWS Bedrock Agents**: Native AWS agents
-
-## 📊 Evaluation Metrics
-
-### Quality Metrics
-- **Answer Correctness**: Factual accuracy assessment
-- **Faithfulness**: Source attribution verification
-- **Context Relevance**: Information retrieval quality
-- **Tool Usage Effectiveness**: Appropriate tool selection
-
-### Performance Metrics
-- **Response Time**: End-to-end latency
-- **Token Usage**: Cost optimization tracking
-- **Success Rate**: Task completion percentage
-- **User Satisfaction**: Feedback-based scoring
-
-### Security Metrics
-- **Prompt Injection Resistance**: Security vulnerability assessment
-- **Bias Detection**: Fairness evaluation
-- **PII Protection**: Data privacy compliance
-- **Policy Compliance**: Guideline adherence
 
 ## 🔧 Configuration
 
