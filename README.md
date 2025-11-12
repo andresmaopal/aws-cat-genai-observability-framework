@@ -16,7 +16,7 @@ This framework provides end-to-end observability and evaluation capabilities for
 ├───────────────────────────────────────────────────────────────────────────────────┤
 │  01-experiment-tracking  │  02-tracing-monitoring  │  03-test-cases-evaluation    │
 │  • Prompt optimization   │  • Langfuse tracing     │  • Automated test generation │
-│  • A/B testing          │  • AgentCore tracing     │  • Strands agents testing    │
+│  • A/B testing           │  • AgentCore tracing    │  • Strands agents testing    │
 │  • Model comparison      │  • Real-time monitoring │  • Bedrock agents testing    │
 ├───────────────────────────────────────────────────────────────────────────────────┤
 │  04-red-teaming-evaluation  │  05-post-tracing-evaluation                         │
