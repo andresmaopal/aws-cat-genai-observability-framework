@@ -1,459 +1,388 @@
-#!/usr/bin/env python3
 """
-AWS Strands Agents SDK - Unified Testing Framework
-
-Unified class with run_test() method and human-readable results display.
+Fixed LiteLLM Unified Tester with proper Langfuse V3 integration and context management
 """
 
-import time
-import json
 import os
+import json
+import yaml
+import time
+import uuid
+import asyncio
+import pandas as pd
 import csv
 from datetime import datetime
+from typing import List, Dict, Any, Optional, Tuple
 from collections import defaultdict
-from typing import List, Dict, Union, Any, Optional, Tuple
-import pandas as pd
-from IPython.display import display
-
-# Strands SDK imports
 from strands import Agent
-from strands.models import BedrockModel
-
+from strands.models.litellm import LiteLLMModel
+from strands.agent import SlidingWindowConversationManager
 
 class UnifiedTester:
-    """Unified testing class with run_test() method and enhanced result display"""
-
+    """Unified testing framework for LiteLLM models with proper Langfuse V3 tracing"""
+    
     def __init__(self):
-        self.models = self._load_models()
-
-    def _load_models(self):
-        """Load models from JSON file"""
-        json_path = os.path.join(os.path.dirname(__file__), 'model_list.json')
-        with open(json_path, 'r') as f:
-            return json.load(f)
-
-    def run_test(self, 
-                 models: List[str], 
-                 system_prompts: List[str], 
-                 queries: Union[str, List[str]], 
-                 prompts_dict: Dict[str, str], 
-                 tool: List = None, 
-                 trace: Any = None,
-                 trace_attributes: Optional[Dict[str, Any]] = None,
-                 save_to_csv: bool = True) -> List[Dict[str, Any]]:
-        """
-        Unified test method that allows testing multiple combinations of:
-        - models: List of model IDs (e.g., ["claude-4-sonnet", "qwen3-235b"])
-        - system_prompts: List of prompt versions (e.g., ["version1", "version2"])
-        - queries: Single query string or list of queries
-        - prompts_dict: Dictionary containing system prompts
-        - tool: List of tools to use
-        - save_to_csv: Whether to save results to CSV in test_results folder (default: True)
+        """Initialize the UnifiedTester"""
+        self.model_configs = self._load_model_configs()
         
-        Returns: List of test results with human-readable structure
-        """
-        # Normalize queries to list
+    def _load_model_configs(self) -> Dict[str, Dict]:
+        """Load model configurations from bedrock_model_list.json"""
+        try:
+            with open('bedrock_model_list.json', 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print("⚠️ bedrock_model_list.json not found, using empty config")
+            return {}
+    
+    def run_test(self, models: List[str], system_prompts: List[str], queries,
+                 prompts_dict: Dict[str, str], tool: List = None, 
+                 trace_attributes: Optional[Dict[str, Any]] = None,
+                 save_to_csv: bool = True, conversation_window: int = 5) -> List[Dict[str, Any]]:
+        """Run unified tests with proper Langfuse V3 tracing"""
+        
+        # Handle both single string and list of queries
         if isinstance(queries, str):
-            queries = [queries]
+            query_list = [queries]
+        elif isinstance(queries, list):
+            query_list = queries
+        else:
+            raise ValueError("queries must be either a string or a list of strings")
+        
+        # Setup Langfuse V3 if trace_attributes provided
+        langfuse_client = None
+        
+        if trace_attributes:
+            langfuse_client = self._setup_langfuse_v3(trace_attributes)
         
         results = []
-        total_tests = len(models) * len(system_prompts) * len(queries)
-        current_test = 0
+        total_tests = len(models) * len(system_prompts) * len(query_list)
         
-        print(f"\n🚀 Starting Unified Test Suite")
+        print(f"\n🚀 Starting LiteLLM Test Suite")
         print(f"📊 Total combinations to test: {total_tests}")
         print(f"🤖 Models: {models}")
         print(f"📝 Prompts: {system_prompts}")
-        print(f"❓ Queries: {len(queries)} query(ies)")
+        print(f"❓ Queries: {len(query_list)} query(ies)")
         print("=" * 80)
         
-        for model_name in models:
-            for prompt_name in system_prompts:
-                for query in queries:
-                    current_test += 1
-                    print(f"\n[{current_test}/{total_tests}] Testing: {model_name} | {prompt_name}")
-                    print(f"Query: {query[:60]}{'...' if len(query) > 60 else ''}")
-                    print("-" * 60)
-                    
-                    result = self._execute_single_test(
-                        model_name, prompt_name, query, prompts_dict, tool, trace_attributes
-                    )
-                    results.append(result)
-                    
-                    # Brief status
-                    status = "✅ SUCCESS" if result['success'] else "❌ FAILED"
-                    print(f"{status} | Time: {result['response_time']:.2f}s")
-                    
-                    # Small delay between tests
-                    time.sleep(0.5)
+        # Run tests within Langfuse context if available
+        if langfuse_client:
+            trace_name = trace_attributes.get("langfuse.trace.name", "LiteLLM Test Suite")
+            
+            with langfuse_client.start_as_current_span(
+                name=trace_name,
+                input={
+                    "test_type": "litellm_unified_test",
+                    "session_id": trace_attributes.get("session.id"),
+                    "user_id": trace_attributes.get("user.id"),
+                    "models": models,
+                    "prompts": system_prompts,
+                    "queries": query_list
+                },
+                metadata={
+                    "environment": trace_attributes.get("langfuse.environment", "development"),
+                    "tags": trace_attributes.get("langfuse.tags", []),
+                    "framework": "Strands Agents LiteLLM",
+                    "version": "1.0"
+                }
+            ):
+                results = self._run_tests_internal(models, system_prompts, query_list, prompts_dict, tool, trace_attributes, langfuse_client, conversation_window)
+                
+                # Update trace with results
+                langfuse_client.update_current_trace(
+                    output={
+                        "total_tests": len(results),
+                        "successful_tests": sum(1 for r in results if r["success"]),
+                        "results_summary": results
+                    }
+                )
+                
+                # Score the trace
+                success_rate = sum(1 for r in results if r["success"]) / len(results) if results else 0
+                langfuse_client.score_current_trace(
+                    name="test_suite_success_rate",
+                    value=success_rate,
+                    comment=f"Test suite completed with {success_rate:.1%} success rate"
+                )
+                
+                langfuse_client.flush()
+                print("✅ Langfuse trace finalized")
+        else:
+            results = self._run_tests_internal(models, system_prompts, query_list, prompts_dict, tool, trace_attributes, None, conversation_window)
         
         print(f"\n🎉 Test Suite Completed! {len(results)} results generated.")
         
-        # Auto-save to CSV if enabled
         if save_to_csv:
             self._save_results_to_csv(results)
         
         return results
-
-    def _execute_single_test(self, model_name: str, prompt_name: str, query: str, 
-                           prompts_dict: Dict[str, str], tool: List = None, 
-                           trace_attributes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Execute a single test combination"""
+    
+    def _setup_langfuse_v3(self, trace_attributes: Dict[str, Any]):
+        """Setup Langfuse V3 client"""
         try:
-            # Validate inputs
-            if model_name not in self.models:
-                raise ValueError(f"Model '{model_name}' not found")
-            if prompt_name not in prompts_dict:
-                raise ValueError(f"Prompt '{prompt_name}' not found")
+            from langfuse import Langfuse
+            
+            langfuse_client = Langfuse(
+                public_key=os.environ.get("LANGFUSE_PUBLIC_KEY"),
+                secret_key=os.environ.get("LANGFUSE_SECRET_KEY"),
+                host=os.environ.get("LANGFUSE_HOST")
+            )
+            
+            print("✅ Langfuse V3 tracing enabled")
+            return langfuse_client
+            
+        except Exception as e:
+            print(f"⚠️ Langfuse setup failed: {str(e)}")
+            return None
+    
+    def _run_tests_internal(self, models: List[str], system_prompts: List[str], queries: List[str],
+                           prompts_dict: Dict[str, str], tool: List = None,
+                           trace_attributes: Optional[Dict[str, Any]] = None,
+                           langfuse_client=None, conversation_window: int = 5) -> List[Dict[str, Any]]:
+        """Internal method to run tests"""
+        results = []
+        total_tests = len(models) * len(system_prompts) * len(queries)
+        test_counter = 0
+        
+        for model_endpoint in models:
+            for prompt_name in system_prompts:
+                for query in queries:
+                    test_counter += 1
+                    print(f"\n[{test_counter}/{total_tests}] Testing: {model_endpoint} | {prompt_name}")
+                    print(f"Query: {query}")
+                    print("-" * 60)
+                    
+                    result = self._execute_single_test(
+                        model_endpoint, prompt_name, query, prompts_dict, tool, 
+                        trace_attributes, langfuse_client, conversation_window
+                    )
+                    results.append(result)
+        
+        return results
+    
+    def _execute_single_test(self, model_endpoint: str, prompt_name: str, query: str,
+                           prompts_dict: Dict[str, str], tool: List = None,
+                           trace_attributes: Optional[Dict[str, Any]] = None,
+                           langfuse_client=None, conversation_window: int = 5) -> Dict[str, Any]:
+        """Execute a single test"""
+        
+        start_time = time.time()
+        
+        try:
+            region = self._get_model_region(model_endpoint)
+            print(f"🔧 Using AWS region: {region}")
             
             # Create agent
-            agent = self._create_agent(model_name, prompt_name, prompts_dict, tool, trace_attributes)
+            agent = self._create_litellm_agent(
+                model_endpoint, prompt_name, prompts_dict, tool, trace_attributes, conversation_window
+            )
             
-            # Execute test
-            start_time = time.time()
-            response = agent(query)
+            # Execute test using synchronous call with error handling for streaming issues
+            try:
+                response = agent(query)
+                
+                # Handle both streaming and non-streaming responses
+                if hasattr(response, 'content'):
+                    response_text = response.content
+                elif hasattr(response, 'choices') and len(response.choices) > 0:
+                    # Handle LiteLLM ModelResponse format
+                    response_text = response.choices[0].message.content
+                else:
+                    response_text = str(response)
+                    
+            except Exception as streaming_error:
+                # If streaming fails, try direct LiteLLM call with stream=False
+                if "async for" in str(streaming_error) or "streaming" in str(streaming_error).lower():
+                    print("⚠️ Streaming issue detected, trying direct LiteLLM call with stream=False")
+                    
+                    import litellm
+                    system_prompt = prompts_dict.get(prompt_name, f"You are a helpful assistant. (Prompt: {prompt_name})")
+                    
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": query}
+                    ]
+                    
+                    direct_response = litellm.completion(
+                        model=model_endpoint,
+                        messages=messages,
+                        stream=False,
+                        temperature=0.1,
+                        max_tokens=4000
+                    )
+                    
+                    response_text = direct_response.choices[0].message.content
+                    response = direct_response  # Fix: Update response variable
+                    print("✅ Direct LiteLLM call successful")
+                else:
+                    raise streaming_error
+            
+            print(response_text)
+            
+            # Check for tool usage
+            tools_used = []
+            if hasattr(response, 'tool_calls') and response.tool_calls:
+                for i, tool_call in enumerate(response.tool_calls, 1):
+                    tool_name = tool_call.get('name', 'Unknown')
+                    tools_used.append(tool_name)
+                    print(f"Tool #{i}: {tool_name}")
+            
             end_time = time.time()
             response_time = end_time - start_time
             
-            # Extract response text
-            if hasattr(response, 'message') and 'content' in response.message:
-                response_text = response.message['content']
-            else:
-                response_text = str(response)
+            print(f"✅ SUCCESS | Time: {response_time:.2f}s")
             
             return {
-                "test_id": f"{model_name}_{prompt_name}_{hash(query) % 10000}",
-                "model": model_name,
+                "test_id": f"{model_endpoint}_{prompt_name}_{int(time.time())}",
+                "model": model_endpoint,
                 "prompt": prompt_name,
                 "query": query,
                 "response": response_text,
+                "tools_used": tools_used,
                 "response_time": response_time,
                 "success": True,
                 "error": None,
-                "timestamp": datetime.now().isoformat(),
-                "model_config": self.models[model_name]
+                "timestamp": datetime.now().isoformat()
             }
             
         except Exception as e:
+            end_time = time.time()
+            response_time = end_time - start_time
+            
+            print(f"❌ FAILED | Error: {str(e)} | Time: {response_time:.2f}s")
+            
             return {
-                "test_id": f"{model_name}_{prompt_name}_{hash(query) % 10000}",
-                "model": model_name,
+                "test_id": f"{model_endpoint}_{prompt_name}_{int(time.time())}",
+                "model": model_endpoint,
                 "prompt": prompt_name,
                 "query": query,
-                "response": "",
-                "response_time": 0,
+                "response": None,
+                "tools_used": [],
+                "response_time": response_time,
                 "success": False,
                 "error": str(e),
-                "timestamp": datetime.now().isoformat(),
-                "model_config": self.models.get(model_name, {})
+                "timestamp": datetime.now().isoformat()
             }
-
-    def _create_agent(self, model_name: str, prompt_name: str, 
-                     prompts_dict: Dict[str, str], tool: List = None,
-                     trace_attributes: Optional[Dict[str, Any]] = None) -> Agent:
-        """Create an agent with specified configuration"""
-        model_config = self.models[model_name]
+    
+    def _create_litellm_agent(self, model_endpoint: str, prompt_name: str,
+                             prompts_dict: Dict[str, str], tool: List = None,
+                             trace_attributes: Optional[Dict[str, Any]] = None,
+                             conversation_window: int = 5) -> Agent:
+        """Create an agent with LiteLLM model"""
         
-        # Create model
-        model = BedrockModel(
-            model_id=model_config["model_id"],
-            temperature=model_config["temperature"],
-            region_name=model_config["region_name"]
-        )
+        # Create model without stream parameter to let Strands handle it
+        model = LiteLLMModel(model_id=model_endpoint)
+        system_prompt = prompts_dict.get(prompt_name, f"You are a helpful assistant. (Prompt: {prompt_name})")
         
-        # Get system prompt
-        system_prompt = prompts_dict[prompt_name]
-        
-        # Create agent
         agent_kwargs = {
             "model": model,
-            "system_prompt": system_prompt
+            "system_prompt": system_prompt,
+            "conversation_manager": SlidingWindowConversationManager(window_size=conversation_window)
         }
         
         if tool:
             agent_kwargs["tools"] = tool
-            
+        
         if trace_attributes:
             import copy
-            # Create a deep copy to avoid modifying the original
             dynamic_trace_attributes = copy.deepcopy(trace_attributes)
             
-            # Dynamically add model trace attribute
             if "langfuse.tags" in dynamic_trace_attributes:
-                # Create new tags list with only current model tag
-                original_tags = [tag for tag in dynamic_trace_attributes["langfuse.tags"] if not tag.startswith("Model-")]
-                dynamic_trace_attributes["langfuse.tags"] = original_tags + [f"Model-{model_name}"]
+                original_tags = [tag for tag in dynamic_trace_attributes["langfuse.tags"] 
+                               if not tag.startswith("Model-")]
+                dynamic_trace_attributes["langfuse.tags"] = original_tags + [f"Model-{model_endpoint}"]
             else:
-                # Create tags list with model tag
-                dynamic_trace_attributes["langfuse.tags"] = [f"Model-{model_name}"]
+                dynamic_trace_attributes["langfuse.tags"] = [f"Model-{model_endpoint}"]
             
             agent_kwargs["trace_attributes"] = dynamic_trace_attributes
         
         return Agent(**agent_kwargs)
-
-    def _save_results_to_csv(self, results: List[Dict[str, Any]]) -> None:
-        """Save results to CSV in test_results folder"""
-        # Create test_results directory if it doesn't exist
-        test_results_dir = "test_results"
-        os.makedirs(test_results_dir, exist_ok=True)
+    
+    def _get_model_region(self, model_endpoint: str) -> str:
+        """Get AWS region for model endpoint"""
+        model_name = model_endpoint.replace("bedrock/", "")
         
-        # Generate filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = os.path.join(test_results_dir, f"test_results_{timestamp}.csv")
+        for config_name, config in self.model_configs.items():
+            if config.get("model_id", "").replace("bedrock/", "") == model_name:
+                return config.get("region_name", "us-east-1")
         
+        return "us-east-1"
+    
+    def _save_results_to_csv(self, results: List[Dict]):
+        """Save results to CSV file"""
+        try:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"test_results/test_results_{timestamp}.csv"
+            
+            os.makedirs("test_results", exist_ok=True)
+            
+            df = pd.DataFrame(results)
+            df.to_csv(filename, index=False)
+            
+            print(f"📁 Results automatically saved to {filename}")
+            
+        except Exception as e:
+            print(f"⚠️ Error saving results to CSV: {str(e)}")
+    
+    def display_results(self, results: List[Dict]):
+        """Display test results in a human-readable format"""
         if not results:
-            print("No results to save.")
+            print("No results to display")
             return
         
-        with open(filename, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                'test_id', 'model', 'prompt', 'query', 'response', 'analysis_text',
-                'response_time', 'success', 'error', 'timestamp'
-            ])
-            writer.writeheader()
-            for result in results:
-                response_text = str(result.get('response', ''))
-                analysis_text = self._extract_analysis_text(response_text)
-                
-                writer.writerow({
-                    'test_id': result.get('test_id', ''),
-                    'model': result.get('model', ''),
-                    'prompt': result.get('prompt', ''),
-                    'query': result.get('query', ''),
-                    'response': response_text,
-                    'analysis_text': analysis_text,
-                    'response_time': result.get('response_time', 0),
-                    'success': result.get('success', False),
-                    'error': result.get('error', ''),
-                    'timestamp': result.get('timestamp', '')
-                })
+        total_tests = len(results)
+        successful_tests = sum(1 for r in results if r["success"])
+        failed_tests = total_tests - successful_tests
         
-        print(f"📁 Results automatically saved to {filename}")
-
-    def display_results(self, results: List[Dict[str, Any]]) -> None:
-        """Display results in human-readable format"""
-        if not results:
-            print("No results to display.")
-            return
-        
-        # Summary statistics
-        successful = [r for r in results if r['success']]
-        failed = [r for r in results if not r['success']]
+        response_times = [r["response_time"] for r in results if r["response_time"] is not None]
+        avg_time = sum(response_times) / len(response_times) if response_times else 0
+        min_time = min(response_times) if response_times else 0
+        max_time = max(response_times) if response_times else 0
         
         print(f"\n📈 RESULTS SUMMARY")
-        print(f"{'='*50}")
-        print(f"Total Tests: {len(results)}")
-        print(f"✅ Successful: {len(successful)} ({len(successful)/len(results)*100:.1f}%)")
-        print(f"❌ Failed: {len(failed)} ({len(failed)/len(results)*100:.1f}%)")
-        
-        if successful:
-            avg_time = sum(r['response_time'] for r in successful) / len(successful)
-            min_time = min(r['response_time'] for r in successful)
-            max_time = max(r['response_time'] for r in successful)
-            print(f"⏱️  Response Times - Avg: {avg_time:.2f}s | Min: {min_time:.2f}s | Max: {max_time:.2f}s")
-        
-        # Group results by model and prompt
-        by_model = defaultdict(list)
-        by_prompt = defaultdict(list)
-        
-        for result in results:
-            by_model[result['model']].append(result)
-            by_prompt[result['prompt']].append(result)
+        print("=" * 50)
+        print(f"Total Tests: {total_tests}")
+        print(f"✅ Successful: {successful_tests} ({successful_tests/total_tests*100:.1f}%)")
+        print(f"❌ Failed: {failed_tests} ({failed_tests/total_tests*100:.1f}%)")
+        print(f"⏱️  Response Times - Avg: {avg_time:.2f}s | Min: {min_time:.2f}s | Max: {max_time:.2f}s")
         
         # Model performance
         print(f"\n🤖 MODEL PERFORMANCE")
-        print(f"{'='*50}")
-        for model, model_results in by_model.items():
-            model_successful = [r for r in model_results if r['success']]
-            success_rate = len(model_successful) / len(model_results) * 100
-            avg_time = sum(r['response_time'] for r in model_successful) / len(model_successful) if model_successful else 0
-            print(f"{model:20} | Success: {success_rate:5.1f}% | Avg Time: {avg_time:6.2f}s | Tests: {len(model_results)}")
+        print("=" * 50)
+        model_stats = {}
+        for result in results:
+            model = result["model"]
+            if model not in model_stats:
+                model_stats[model] = {"success": 0, "total": 0, "times": []}
+            
+            model_stats[model]["total"] += 1
+            if result["success"]:
+                model_stats[model]["success"] += 1
+            if result["response_time"] is not None:
+                model_stats[model]["times"].append(result["response_time"])
+        
+        for model, stats in model_stats.items():
+            success_rate = stats["success"] / stats["total"] * 100 if stats["total"] > 0 else 0
+            avg_time = sum(stats["times"]) / len(stats["times"]) if stats["times"] else 0
+            print(f"{model:<50} | Success: {success_rate:5.1f}% | Avg Time: {avg_time:6.2f}s | Tests: {stats['total']}")
         
         # Prompt performance
         print(f"\n📝 PROMPT PERFORMANCE")
-        print(f"{'='*50}")
-        for prompt, prompt_results in by_prompt.items():
-            prompt_successful = [r for r in prompt_results if r['success']]
-            success_rate = len(prompt_successful) / len(prompt_results) * 100
-            avg_time = sum(r['response_time'] for r in prompt_successful) / len(prompt_successful) if prompt_successful else 0
-            print(f"{prompt:20} | Success: {success_rate:5.1f}% | Avg Time: {avg_time:6.2f}s | Tests: {len(prompt_results)}")
-
-
-    def analyze_results(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Analyze results and provide insights"""
-        if not results:
-            return {}
-        
-        analysis = {
-            "total_tests": len(results),
-            "successful_tests": len([r for r in results if r['success']]),
-            "failed_tests": len([r for r in results if not r['success']]),
-            "success_rate": len([r for r in results if r['success']]) / len(results) * 100,
-            "models_tested": list(set(r['model'] for r in results)),
-            "prompts_tested": list(set(r['prompt'] for r in results)),
-            "queries_tested": len(set(r['query'] for r in results))
-        }
-        
-        successful = [r for r in results if r['success']]
-        if successful:
-            response_times = [r['response_time'] for r in successful]
-            analysis.update({
-                "avg_response_time": sum(response_times) / len(response_times),
-                "min_response_time": min(response_times),
-                "max_response_time": max(response_times)
-            })
-        
-        # Model rankings
-        model_performance = defaultdict(list)
+        print("=" * 50)
+        prompt_stats = {}
         for result in results:
-            model_performance[result['model']].append(result)
-        
-        model_rankings = []
-        for model, model_results in model_performance.items():
-            successful_model = [r for r in model_results if r['success']]
-            success_rate = len(successful_model) / len(model_results) * 100
-            avg_time = sum(r['response_time'] for r in successful_model) / len(successful_model) if successful_model else float('inf')
+            prompt = result["prompt"]
+            if prompt not in prompt_stats:
+                prompt_stats[prompt] = {"success": 0, "total": 0, "times": []}
             
-            model_rankings.append({
-                "model": model,
-                "success_rate": success_rate,
-                "avg_response_time": avg_time,
-                "total_tests": len(model_results)
-            })
+            prompt_stats[prompt]["total"] += 1
+            if result["success"]:
+                prompt_stats[prompt]["success"] += 1
+            if result["response_time"] is not None:
+                prompt_stats[prompt]["times"].append(result["response_time"])
         
-        # Sort by success rate, then by response time
-        model_rankings.sort(key=lambda x: (-x['success_rate'], x['avg_response_time']))
-        analysis["model_rankings"] = model_rankings
-        
-        # Display analysis
-        print(f"🔍 PERFORMANCE ANALYSIS")
-        print(f"{'='*50}")
-        print(f"Overall Success Rate: {analysis['success_rate']:.1f}%")
-        print(f"Models Tested: {len(analysis['models_tested'])}")
-        print(f"Prompts Tested: {len(analysis['prompts_tested'])}")
-        print(f"Unique Queries: {analysis['queries_tested']}")
-        
-        if 'avg_response_time' in analysis:
-            print(f"Average Response Time: {analysis['avg_response_time']:.2f}s")
-        
-        print(f"\n🏆 MODEL RANKINGS (by success rate, then speed)")
-        print(f"{'='*60}")
-        for i, model_data in enumerate(model_rankings, 1):
-            print(f"{i}. {model_data['model']:20} | {model_data['success_rate']:5.1f}% | {model_data['avg_response_time']:6.2f}s")
-        
-        return analysis
-
-    def _extract_analysis_text(self, response: str) -> str:
-        """Extract text from <analysis></analysis> tags"""
-        import re
-        if not isinstance(response, str):
-            response = str(response)
-        
-        match = re.search(r'<analysis>(.*?)</analysis>', response, re.DOTALL | re.IGNORECASE)
-        return match.group(1).strip() if match else ""
-
-    def export_results(self, results: List[Dict[str, Any]], base_filename: str = "test_results") -> None:
-        """Export results to CSV file with timestamp"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{base_filename}_{timestamp}.csv"
-        
-        if not results:
-            print("No results to export.")
-            return
-        
-        with open(filename, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                'test_id', 'model', 'prompt', 'query', 'response', 'analysis_text',
-                'response_time', 'success', 'error', 'timestamp'
-            ])
-            writer.writeheader()
-            for result in results:
-                response_text = str(result.get('response', ''))
-                analysis_text = self._extract_analysis_text(response_text)
-                
-                writer.writerow({
-                    'test_id': result.get('test_id', ''),
-                    'model': result.get('model', ''),
-                    'prompt': result.get('prompt', ''),
-                    'query': result.get('query', ''),
-                    'response': response_text,
-                    'analysis_text': analysis_text,
-                    'response_time': result.get('response_time', 0),
-                    'success': result.get('success', False),
-                    'error': result.get('error', ''),
-                    'timestamp': result.get('timestamp', '')
-                })
-        
-        print(f"📁 Results exported to {filename}")
-
-    def list_models_by_provider(self, filter_string: str = None):
-        """List all models grouped by provider in a human-readable format
-        
-        Args:
-            filter_string: Optional string to filter models (case-insensitive)
-        """
-        provider_groups = {}
-        filtered_models = {}
-        
-        # Filter models if filter_string is provided
-        if filter_string:
-            filter_string = filter_string.lower()
-            for model_name, config in self.models.items():
-                if filter_string in model_name.lower() or filter_string in config["model_id"].lower():
-                    filtered_models[model_name] = config
-        else:
-            filtered_models = self.models
-        
-        for model_name, config in filtered_models.items():
-            model_id = config["model_id"]
-            if model_id.startswith("anthropic") or "anthropic" in model_id:
-                provider = "Anthropic"
-            elif model_id.startswith("amazon") or "amazon" in model_id:
-                provider = "Amazon"
-            elif model_id.startswith("meta") or "meta" in model_id:
-                provider = "Meta"
-            elif model_id.startswith("mistral") or "mistral" in model_id:
-                provider = "Mistral AI"
-            elif model_id.startswith("cohere"):
-                provider = "Cohere"
-            elif model_id.startswith("deepseek") or "deepseek" in model_id:
-                provider = "DeepSeek"
-            elif model_id.startswith("openai") or "openai" in model_id:
-                provider = "OpenAI"
-            elif model_id.startswith("ai21"):
-                provider = "AI21"
-            elif "twelvelabs" in model_id:
-                provider = "TwelveLabs"
-            else:
-                provider = "Other"
-            
-            if provider not in provider_groups:
-                provider_groups[provider] = []
-            
-            provider_groups[provider].append({
-                "name": model_name,
-                "model_id": model_id[0:28],
-                "region": config["region_name"],
-                "type": config["inference_type"],
-                "tooling": config["tooling_enabled"]
-            })
-        
-        filter_text = f" (filtered by '{filter_string}')" if filter_string else ""
-        print(f"\n📋 AVAILABLE MODELS ({len(filtered_models)} total{filter_text})")
-        print("=" * 140)
-        
-        for provider in sorted(provider_groups.keys()):
-            models = sorted(provider_groups[provider], key=lambda x: x["name"])
-            print(f"\n🏢 {provider} ({len(models)} models)")
-            print("-" * 90)
-            print(f"  {'TYPE':<4}| {'MODEL_NAME':<25} | {'ENDPOINT':<33} | {'REGION':<13} | {'TOOL_SUPPORT'}")
-            print("-" * 90)
-            
-            for model in models:
-                region_badge = "🌍" if model["type"] == "INFERENCE_PROFILE" else "📍"
-                tooling_badge = "🔧" if model["tooling"] else "❌"
-                print(f"  {region_badge:<4} {model['name']:<25} | {model['model_id']:<32} | {model['region']:<12} | {tooling_badge}")
-
+        for prompt, stats in prompt_stats.items():
+            success_rate = stats["success"] / stats["total"] * 100 if stats["total"] > 0 else 0
+            avg_time = sum(stats["times"]) / len(stats["times"]) if stats["times"] else 0
+            print(f"{prompt:<20} | Success: {success_rate:5.1f}% | Avg Time: {avg_time:6.2f}s | Tests: {stats['total']}")
 
     def run_evaluation(self, 
                       models: List[str], 
@@ -464,7 +393,8 @@ class UnifiedTester:
                       langfuse_public_key: str = None,
                       langfuse_secret_key: str = None, 
                       langfuse_api_url: str = None,
-                      save_to_csv: bool = True) -> List[Dict[str, Any]]:
+                      save_to_csv: bool = True,
+                      conversation_window: int = 5) -> List[Dict[str, Any]]:
         """
         Run evaluation using test cases from YAML file with LLM-as-judge evaluation.
         
@@ -488,8 +418,15 @@ class UnifiedTester:
             raise ValueError("test_cases_path is required")
         
         # Load test cases from YAML
-        with open(test_cases_path, 'r', encoding='utf-8') as f:
-            test_cases = yaml.safe_load(f)
+        try:
+            with open(test_cases_path, 'r', encoding='utf-8') as f:
+                test_cases = yaml.safe_load(f)
+        except FileNotFoundError:
+            print(f"⚠️ Test cases file not found: {test_cases_path}")
+            return []
+        except Exception as e:
+            print(f"⚠️ Error loading test cases: {str(e)}")
+            return []
         
         # Initialize Langfuse if credentials provided
         langfuse_client = None
@@ -546,10 +483,10 @@ class UnifiedTester:
                     print("-" * 60)
                     
                     # Create evaluator agent for this combination
-                    evaluator_agent = self._create_agent(model_name, prompt_name, prompts_dict, tool)
+                    evaluator_agent = self._create_litellm_agent(model_name, prompt_name, prompts_dict, tool, None, conversation_window)
                     
                     # Create judge agent (using same model for simplicity)
-                    judge_agent = self._create_judge_agent(model_name)
+                    judge_agent = self._create_litellm_judge_agent(model_name)
                     
                     # Run evaluation for this test case
                     eval_result = self._evaluate_test_case(
@@ -637,9 +574,8 @@ class UnifiedTester:
         
         return results
 
-    def _create_judge_agent(self, model_name: str) -> Agent:
-        """Create a judge agent for evaluation"""
-        model_config = self.models[model_name]
+    def _create_litellm_judge_agent(self, model_name: str) -> Agent:
+        """Create a judge agent for evaluation using LiteLLM"""
         
         judge_system_prompt = """You are an expert quality assurance engineer evaluating an agent's response to a user question.
 
@@ -661,15 +597,14 @@ OR
 
 <category>FAILED</category>
 
-Do not include any other text outside these XML tags."""
-        
-        model = BedrockModel(
-            model_id=model_config["model_id"],
-            temperature=0.1,  # Lower temperature for consistent evaluation
-            region_name=model_config["region_name"]
+Do not include any other text outside of these tags."""
+
+        model = LiteLLMModel(model_id=model_name)
+        return Agent(
+            model=model, 
+            system_prompt=judge_system_prompt,
+            conversation_manager=SlidingWindowConversationManager(window_size=5)
         )
-        
-        return Agent(model=model, system_prompt=judge_system_prompt)
 
     def _evaluate_test_case(self, test_name: str, test_data: Dict, 
                            evaluator_agent: Agent, judge_agent: Agent,
