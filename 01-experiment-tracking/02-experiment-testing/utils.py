@@ -32,11 +32,19 @@ class UnifiedTester:
             print("⚠️ bedrock_model_list.json not found, using empty config")
             return {}
     
-    def run_test(self, models: List[str], system_prompts: List[str], queries: str,
+    def run_test(self, models: List[str], system_prompts: List[str], queries,
                  prompts_dict: Dict[str, str], tool: List = None, 
                  trace_attributes: Optional[Dict[str, Any]] = None,
                  save_to_csv: bool = True) -> List[Dict[str, Any]]:
         """Run unified tests with proper Langfuse V3 tracing"""
+        
+        # Handle both single string and list of queries
+        if isinstance(queries, str):
+            query_list = [queries]
+        elif isinstance(queries, list):
+            query_list = queries
+        else:
+            raise ValueError("queries must be either a string or a list of strings")
         
         # Setup Langfuse V3 if trace_attributes provided
         langfuse_client = None
@@ -45,13 +53,13 @@ class UnifiedTester:
             langfuse_client = self._setup_langfuse_v3(trace_attributes)
         
         results = []
-        total_tests = len(models) * len(system_prompts)
+        total_tests = len(models) * len(system_prompts) * len(query_list)
         
         print(f"\n🚀 Starting LiteLLM Test Suite")
         print(f"📊 Total combinations to test: {total_tests}")
         print(f"🤖 Models: {models}")
         print(f"📝 Prompts: {system_prompts}")
-        print(f"❓ Queries: 1 query(ies)")
+        print(f"❓ Queries: {len(query_list)} query(ies)")
         print("=" * 80)
         
         # Run tests within Langfuse context if available
@@ -65,7 +73,8 @@ class UnifiedTester:
                     "session_id": trace_attributes.get("session.id"),
                     "user_id": trace_attributes.get("user.id"),
                     "models": models,
-                    "prompts": system_prompts
+                    "prompts": system_prompts,
+                    "queries": query_list
                 },
                 metadata={
                     "environment": trace_attributes.get("langfuse.environment", "development"),
@@ -74,7 +83,7 @@ class UnifiedTester:
                     "version": "1.0"
                 }
             ):
-                results = self._run_tests_internal(models, system_prompts, queries, prompts_dict, tool, trace_attributes, langfuse_client)
+                results = self._run_tests_internal(models, system_prompts, query_list, prompts_dict, tool, trace_attributes, langfuse_client)
                 
                 # Update trace with results
                 langfuse_client.update_current_trace(
@@ -96,7 +105,7 @@ class UnifiedTester:
                 langfuse_client.flush()
                 print("✅ Langfuse trace finalized")
         else:
-            results = self._run_tests_internal(models, system_prompts, queries, prompts_dict, tool, trace_attributes, None)
+            results = self._run_tests_internal(models, system_prompts, query_list, prompts_dict, tool, trace_attributes, None)
         
         print(f"\n🎉 Test Suite Completed! {len(results)} results generated.")
         
@@ -123,27 +132,28 @@ class UnifiedTester:
             print(f"⚠️ Langfuse setup failed: {str(e)}")
             return None
     
-    def _run_tests_internal(self, models: List[str], system_prompts: List[str], queries: str,
+    def _run_tests_internal(self, models: List[str], system_prompts: List[str], queries: List[str],
                            prompts_dict: Dict[str, str], tool: List = None,
                            trace_attributes: Optional[Dict[str, Any]] = None,
                            langfuse_client=None) -> List[Dict[str, Any]]:
         """Internal method to run tests"""
         results = []
-        total_tests = len(models) * len(system_prompts)
+        total_tests = len(models) * len(system_prompts) * len(queries)
         test_counter = 0
         
         for model_endpoint in models:
             for prompt_name in system_prompts:
-                test_counter += 1
-                print(f"\n[{test_counter}/{total_tests}] Testing: {model_endpoint} | {prompt_name}")
-                print(f"Query: {queries}")
-                print("-" * 60)
-                
-                result = self._execute_single_test(
-                    model_endpoint, prompt_name, queries, prompts_dict, tool, 
-                    trace_attributes, langfuse_client
-                )
-                results.append(result)
+                for query in queries:
+                    test_counter += 1
+                    print(f"\n[{test_counter}/{total_tests}] Testing: {model_endpoint} | {prompt_name}")
+                    print(f"Query: {query}")
+                    print("-" * 60)
+                    
+                    result = self._execute_single_test(
+                        model_endpoint, prompt_name, query, prompts_dict, tool, 
+                        trace_attributes, langfuse_client
+                    )
+                    results.append(result)
         
         return results
     
